@@ -1,0 +1,129 @@
+<view class="page-shell" bindtap="exitDeleteMode">
+  <view class="page-content {{isFullscreen ? 'content-hidden' : ''}}">
+    <text class="title">咔嗒补光灯</text>
+
+    <view class="preview-card" style="background-color: {{previewColor}};" bindtap="toggleFullscreen"></view>
+    <text class="preview-notice {{isPreviewNoticeVisible ? 'preview-notice-visible' : ''}}">{{previewNoticeText}}</text>
+
+    <view class="control-block">
+      <view class="wheel-wrap">
+        <view
+          id="colorWheel"
+          class="color-wheel"
+          bindtouchstart="onWheelTouch"
+          bindtouchmove="onWheelTouch"
+        ></view>
+        <view class="wheel-marker" style="left: {{markerX}}px; top: {{markerY}}px;"></view>
+      </view>
+    </view>
+
+    <view class="color-picker-row">
+      <view class="color-scroll-wrap">
+        <scroll-view
+          class="color-options-scroll"
+          scroll-x="true"
+          enable-flex="true"
+          paging-enabled="true"
+          scroll-with-animation="true"
+          show-scrollbar="false"
+        >
+          <view class="color-options">
+            <button
+              wx:for="{{presetOptions}}"
+              wx:key="key"
+              class="color-option"
+              data-preset="{{item.key}}"
+              bindtap="applyPreset"
+              hover-class="color-option-pressed"
+            >
+              <view
+                class="color-swatch {{activePreset === item.key ? 'color-swatch-active' : ''}}"
+                style="background-color: {{item.swatch}};"
+              ></view>
+              <text class="color-label">{{item.label}}</text>
+            </button>
+
+            <button
+              wx:for="{{customColors}}"
+              wx:key="id"
+              class="color-option"
+              data-id="{{item.id}}"
+              bindtap="applyCustomColor"
+              catchlongpress="enterDeleteMode"
+              hover-class="color-option-pressed"
+            >
+              <view
+                class="color-swatch {{activeCustomColorId === item.id ? 'color-swatch-active' : ''}}"
+                style="background-color: {{item.previewColor}};"
+              ></view>
+              <view
+                wx:if="{{isDeleteMode}}"
+                class="delete-color-button"
+                data-id="{{item.id}}"
+                catchtap="deleteCustomColor"
+              >×</view>
+              <text
+                class="color-label custom-color-label"
+                data-id="{{item.id}}"
+                catchtap="editCustomColorName"
+              >{{item.name}}</text>
+            </button>
+          </view>
+        </scroll-view>
+      </view>
+
+      <button class="color-option save-option" bindtap="saveCurrentColor" hover-class="color-option-pressed">
+        <view class="color-swatch save-swatch {{customColors.length >= 20 ? 'save-swatch-disabled' : ''}}">
+          <text class="save-icon">+</text>
+        </view>
+        <text class="color-label">保存</text>
+      </button>
+    </view>
+
+    <view
+      id="brightnessSlider"
+      class="brightness-slider"
+      role="slider"
+      aria-label="亮度"
+      aria-valuemin="0"
+      aria-valuemax="95"
+      aria-valuenow="{{brightness}}"
+      bindtouchstart="onBrightnessTouch"
+      catchtouchmove="onBrightnessTouch"
+    >
+      <view class="brightness-slider-track">
+        <view class="brightness-slider-fill" style="width: {{brightness / 95 * 100}}%;"></view>
+      </view>
+    </view>
+  </view>
+
+  <view
+    class="fullscreen-preview {{isOverlayVisible ? 'fullscreen-visible' : ''}} {{isOverlayPrepared ? 'fullscreen-prepared' : ''}}"
+    style="background-color: {{previewColor}}; {{fullscreenStyle}}"
+    catchtap="toggleFullscreen"
+  ></view>
+
+  <view wx:if="{{isNameDialogVisible}}" class="name-dialog-mask" bindtap="closeNameDialog" catchtouchmove="stopPropagation">
+    <view class="name-dialog" catchtap="stopPropagation">
+      <text class="name-dialog-title">颜色名称</text>
+      <view class="name-input-row">
+        <input
+          class="name-input"
+          value="{{customColorName}}"
+          maxlength="{{maxColorNameLength}}"
+          focus="{{isNameDialogVisible}}"
+          placeholder="最多4个字符"
+          placeholder-class="name-input-placeholder"
+          confirm-type="done"
+          bindinput="onCustomColorNameInput"
+          bindconfirm="confirmSaveColor"
+        />
+        <text class="name-count">{{customColorNameLength}}/{{maxColorNameLength}}</text>
+      </view>
+      <view class="name-dialog-actions">
+        <button class="dialog-button dialog-cancel" bindtap="closeNameDialog">取消</button>
+        <button class="dialog-button dialog-confirm" bindtap="confirmSaveColor">{{editingCustomColorId ? '完成' : '保存'}}</button>
+      </view>
+    </view>
+  </view>
+</view>

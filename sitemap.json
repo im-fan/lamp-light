@@ -1,0 +1,4 @@
+{
+  "desc": "灯光调色工具",
+  "rules": [{ "action": "allow", "page": "*" }]
+}

@@ -1,0 +1,12 @@
+{
+  "pages": ["pages/index/index"],
+  "window": {
+    "navigationBarTitleText": "咔嗒补光灯",
+    "navigationBarBackgroundColor": "#121417",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#121417",
+    "backgroundTextStyle": "light"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
